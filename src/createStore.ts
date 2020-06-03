@@ -130,7 +130,7 @@ export default function createStore<
           'Pass it down from the top reducer instead of reading it from the store.'
       )
     }
-
+    // 直接返回当前的 State
     return currentState as S
   }
 
@@ -192,8 +192,8 @@ export default function createStore<
 
       ensureCanMutateNextListeners()
       const index = nextListeners.indexOf(listener)
-      nextListeners.splice(index, 1)
-      currentListeners = null
+      nextListeners.splice(index, 1) // 删除该 listener
+      currentListeners = null // 手动解除引用，释放
     }
   }
 
@@ -243,11 +243,12 @@ export default function createStore<
 
     try {
       isDispatching = true
-      currentState = currentReducer(currentState, action)
+      currentState = currentReducer(currentState, action) // 使用 reducer 获取新的 state
     } finally {
       isDispatching = false
     }
 
+    // 遍历调用所有注册的 listeners
     const listeners = (currentListeners = nextListeners)
     for (let i = 0; i < listeners.length; i++) {
       const listener = listeners[i]
